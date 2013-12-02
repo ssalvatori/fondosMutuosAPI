@@ -1,0 +1,19 @@
+{
+  "name": "fondosMutuosAPI",
+  "version": "1.0.0",
+  "description": "Server for fondosMutuos",
+  "main": "server.js",
+  "repository": "https://github.com/ssalvatori/fondosMutuosAPI.git",
+  "author": "Stefano Salvatori",
+  "dependencies": {
+    "mongoose": "3.8.1",
+    "restify" : "latest"
+  },
+  "homepage" : "https://github.com/ssalvatori/fondosMutuosAPI",
+  "engines": {
+    "node": ">= 0.6.0",
+    "npm": ">= 1.0.0"
+  },
+  "private": true,
+  "main": "server.js"
+}
