@@ -62,7 +62,7 @@ server.post("/fondosMutuos/record/save", recordCreate);
 server.get("/fondosMutuos/record/find",recordFindAll);
 
 function recordCreate(req, res, next) {
-	var dataObj = JSON.parse(req.body);
+	var dataObj = req.body;
 	console.log("Request:");
 	console.log(JSON.stringify(dataObj));
 
