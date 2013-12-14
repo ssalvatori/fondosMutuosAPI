@@ -1,6 +1,6 @@
 {
   "name": "fondosMutuosAPI",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Server for fondosMutuos",
   "main": "server.js",
   "repository": "https://github.com/ssalvatori/fondosMutuosAPI.git",
