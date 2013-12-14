@@ -12,7 +12,7 @@ var serverIp = process.env.OPENSHIFT_NODEJS_IP  || "0.0.0.0";
 var mongoURI = process.env.MONGO_DEV_URI || "mongodb://127.0.0.1:27017/test";
 var authentificationOn = process.env.SERVER_AUTHENTIFICACION || 0;
 
-server.listen(8080, function () {
+server.listen(serverPort, serverIp, function() {
     'use strict';
 	console.log('%s listening at %s', server.name, server.url);
 });
