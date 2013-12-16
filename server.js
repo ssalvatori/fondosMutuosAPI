@@ -137,6 +137,27 @@ function recordFindAll(req, res, next) {
 	});
 }
 
+function recordFindNames (req, res, next) {
+    'use strict';
+    
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    
+    console.log("finding distinct names");
+    
+    RecordModel.find().distinct('name', function (err, names) {
+        if (err) {
+            console.log("ERROR " +  err);
+            return next(err);
+        }
+        res.send({"status": "ok", "names": names});
+        return next();
+    });
+}
+
+
+
 /*routes*/
 server.post("/fondosMutuos/record/save", recordCreate);
 server.get("/fondosMutuos/record/find", recordFindAll);
+server.get("/fondosMutuos/record/names", recordFindNames);
