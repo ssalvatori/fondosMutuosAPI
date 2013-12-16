@@ -73,8 +73,11 @@ var RecordModel = mongoose.model('Records', schemaRecord);
 
 function recordCreate(req, res, next) {
     'use strict';
+    
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    
+    console.log("saving record");
     
 	var dataObj = req.body;
     var Record = new RecordModel({
@@ -98,6 +101,8 @@ function recordFindAll(req, res, next) {
     
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    
+    console.log("finding records");
     
 	console.log("Params: ");
 	console.log(req.params);
