@@ -49,7 +49,7 @@ server.use(function authenticate(req, res, next) {
     next();
 });
 
-mongoose.connect(mongoURI, function (err, res) {
+mongoose.connect(mongoURI, {server:{auto_reconnect:true}} ,function (err, res) {
     'use strict';
 	if (err) {
 		console.log("Error connecting to mongo server");
