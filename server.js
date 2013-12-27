@@ -127,7 +127,7 @@ function recordFindAll(req, res, next) {
 	console.log("Conditions");
 	console.log(conditions);
  
-	RecordModel.find(conditions, "name price priceDate", function (err, results) {
+	RecordModel.find(conditions, "name price priceDate", {sort: {priceDate: -1}}, function (err, results) {
 		if (err) {
 			console.log("ERROR " + err);
 			return next(err);
