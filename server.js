@@ -61,7 +61,7 @@ mongoose.connection.on('disconnected', function() {
     console.log('Mongoose connection disconnected');
 });
 
-mongoose.connect(mongoURI, {server:{auto_reconnect:true}} ,function (err, res) {
+mongoose.connect(mongoURI, {server:{auto_reconnect:true, socketOptions: { keepAlive: 1 }}} ,function (err, res) {
     'use strict';
 	if (err) {
 		console.log("Error connecting to mongo server");
