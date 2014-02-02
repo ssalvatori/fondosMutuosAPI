@@ -12,7 +12,7 @@ var serverIp = process.env.OPENSHIFT_NODEJS_IP  || "0.0.0.0";
 var mongoURI = process.env.MONGO_DEV_URI || "mongodb://127.0.0.1:27017/test";
 var authentificationOn = process.env.SERVER_AUTHENTIFICACION || 0;
 
-server.listen(serverPort, serverIp, function() {
+server.listen(serverPort, serverIp, function () {
     'use strict';
 	console.log('%s listening at %s', server.name, server.url);
 });
@@ -27,7 +27,7 @@ server.use(restify.authorizationParser());
 server.use(function authenticate(req, res, next) {
     'use strict';
     
-    if (authentificationOn != "1") {
+    if (authentificationOn !== "1") {
         next();
     }
     
@@ -49,19 +49,22 @@ server.use(function authenticate(req, res, next) {
     next();
 });
 
-mongoose.connection.on('connected', function() {
+mongoose.connection.on('connected', function () {
+    'use strict';
     console.log('Mongoose connection open');
 });
 
-mongoose.connection.on('error', function(err) {
+mongoose.connection.on('error', function (err) {
+    'use strict';
     console.log('Mongoose connection error: ' + err);
 });
 
-mongoose.connection.on('disconnected', function() {
+mongoose.connection.on('disconnected', function () {
+    'use strict';
     console.log('Mongoose connection disconnected');
 });
 
-mongoose.connect(mongoURI, {server:{auto_reconnect:true, socketOptions: { keepAlive: 1 }}} ,function (err, res) {
+mongoose.connect(mongoURI, {server: {auto_reconnect: true, socketOptions: { keepAlive: 1 }}}, function (err, res) {
     'use strict';
 	if (err) {
 		console.log("Error connecting to mongo server");
@@ -80,8 +83,16 @@ var schemaRecord = new mongoose.Schema({
 	obtain: { type: Date, default: Date.now}
 });
 
+var schemaCustody = new mongoose.Schema({
+    total: { type: Number, required: true},
+    name: { type: String, required: true, trim: true},
+    realized: { type: Date, default: Date.now},
+    created: { type: Date, default: Date.now},
+    active: {type: Boolean, default: true}
+});
 
 var RecordModel = mongoose.model('Records', schemaRecord);
+var CustodyModel = mongoose.model('Custody', schemaCustody);
 
 function recordCreate(req, res, next) {
     'use strict';
@@ -149,7 +160,7 @@ function recordFindAll(req, res, next) {
 	});
 }
 
-function recordFindNames (req, res, next) {
+function recordFindNames(req, res, next) {
     'use strict';
     
     res.header("Access-Control-Allow-Origin", "*");
@@ -167,9 +178,67 @@ function recordFindNames (req, res, next) {
     });
 }
 
+function custodyList(req, res, next) {
+    'use strict';
+    
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    
+    console.log("finding stock in custody");
+
+    var name = req.params.name;
+
+    CustodyModel.aggregate([
+            { $match : { name: name, active: true }},
+            { $group : { _id: null, sum : { $sum : '$total' }}}
+        ], 
+        function(err, summary) {
+            if(err) {
+                console.log(err);
+                next();
+            }
+            console.log(summary);
+            res.send(summary);
+            next();
+        });
+}
+
+function custodyCreate(req, res, next) {
+    'use strict';
+    
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    
+    console.log("saving custody");
+    
+	var dataObj = req.body;
+
+    var Record = new CustodyModel({
+		name  : dataObj.name,
+		total : dataObj.total,
+        create: new Date(),
+        realized: dataObj.realized,
+		active :   true
+	});
+
+	Record.save(function (err) {
+		if (err) {
+			console.log("ERROR " + err);
+			return next(err);
+		}
+		res.send({"status" : "OK", "code" : "001"});
+		return next();
+	});
+}
+
 
 
 /*routes*/
 server.post("/fondosMutuos/record/save", recordCreate);
 server.get("/fondosMutuos/record/find", recordFindAll);
 server.get("/fondosMutuos/record/names", recordFindNames);
+
+server.post("/fondosMutuos/custody/add", custodyCreate);
+server.get("/fondosMutuos/custody/list", custodyList);
+
+
